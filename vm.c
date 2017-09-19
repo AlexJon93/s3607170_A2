@@ -2,7 +2,7 @@
 
 int main(int argc, char ** argv)
 {
-	VmSystem * system = NULL;
+	VmSystem * system;
 
     if(argc != ARG_NUM)
     {
