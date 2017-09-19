@@ -1,7 +1,7 @@
 #ifndef VM_H
 #define VM_H
 
-#include "menu.h"
+#include "vm_menu.h"
 
 #define ARG_NUM 2
 

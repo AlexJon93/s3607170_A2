@@ -1,7 +1,7 @@
 #ifndef VM_STOCK_H
 #define VM_STOCK_H
 
-#include "coin.h"
+#include "vm_coin.h"
 
 /**
  * The default stock level that all new stock should start with and the value

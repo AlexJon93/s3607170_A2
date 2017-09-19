@@ -1,4 +1,4 @@
-#include "coin.h"
+#include "vm_coin.h"
 
 /**
  * Implement functions here for managing coins and the

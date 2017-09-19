@@ -1,4 +1,4 @@
-#include "menu.h"
+#include "vm_menu.h"
 
 /**
  * vm_menu.c handles the initialisation and management of the menu array.

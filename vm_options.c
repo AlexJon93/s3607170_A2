@@ -1,4 +1,4 @@
-#include "options.h"
+#include "vm_options.h"
 
 /**
  * vm_options.c this is where you need to implement the system handling
@@ -13,6 +13,15 @@
  **/
 Boolean systemInit(VmSystem * system)
 {
+	if((system->itemList = malloc(sizeof(system->itemList))) != NULL)
+	{
+		system->itemList->head = NULL;
+		system->itemList->size = 0;
+
+		return TRUE;
+	}
+
+	printf("Unable to allocate data\n");
     return FALSE;
 }
 

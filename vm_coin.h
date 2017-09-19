@@ -1,7 +1,7 @@
 #ifndef VM_COIN_H
 #define VM_COIN_H
 
-#include "system.h"
+#include "vm_system.h"
 
 /**
  * The default coin level used when resetting values.

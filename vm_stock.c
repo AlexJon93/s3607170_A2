@@ -1,4 +1,4 @@
-#include "stock.h"
+#include "vm_stock.h"
 
 /**
  * vm_stock.c this is the file where you will implement the

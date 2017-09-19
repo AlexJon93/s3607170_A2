@@ -1,7 +1,7 @@
 #ifndef VM_MENU_H
 #define VM_MENU_H
 
-#include "options.h"
+#include "vm_options.h"
 
 /**
  * The maximum length of a menu item's text.

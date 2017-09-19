@@ -1,7 +1,7 @@
 #ifndef VM_OPTIONS_H
 #define VM_OPTIONS_H
 
-#include "stock.h"
+#include "vm_stock.h"
 
 Boolean systemInit(VmSystem * system);
 void systemFree(VmSystem * system);
