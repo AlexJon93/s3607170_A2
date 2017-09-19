@@ -2,15 +2,17 @@
 
 int main(int argc, char ** argv)
 {
-	VmSystem * system;
+	VmSystem system;
 
-    if(argc != ARG_NUM)
+    if(argc != STK_ARG && argc != CON_ARG)
     {
         printf("Invalid number of args\n\n");
         return EXIT_FAILURE;
     }
 
-    if(!systemInit(system))
+    if(!systemInit(&system))
+    	return EXIT_FAILURE;
+    if(!loadData(&system, argv[STK_ARG-1], argv[CON_ARG-1]))
     	return EXIT_FAILURE;
 
     printf("Goodbye. \n\n");

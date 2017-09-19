@@ -3,6 +3,7 @@
 
 #include "vm_menu.h"
 
-#define ARG_NUM 2
+#define STK_ARG 2
+#define CON_ARG 3
 
 #endif

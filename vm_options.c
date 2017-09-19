@@ -42,6 +42,10 @@ void systemFree(VmSystem * system)
 Boolean loadData(
     VmSystem * system, const char * stockFileName, const char * coinsFileName)
 {
+	loadStock(system, stockFileName);
+	if(coinsFileName != NULL)
+		loadCoins(system, coinsFileName);
+
     return FALSE;
 }
 
@@ -50,6 +54,13 @@ Boolean loadData(
  **/
 Boolean loadStock(VmSystem * system, const char * fileName)
 {
+	FILE *stockFile;
+
+	if((stockFile = fopen(fileName, "r")) != NULL)
+	{
+		printf("Working!");
+	}
+
     return FALSE;
 }
 
