@@ -24,6 +24,7 @@ typedef enum boolean
 #define EXTRA_SPACES (NEW_LINE_SPACE + NULL_SPACE)
 
 #define EMPTY_STRING ""
+#define END_DELIM "\n"
 
 /**
  * Call this function whenever you detect buffer overflow.

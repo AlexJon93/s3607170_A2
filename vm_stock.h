@@ -10,7 +10,10 @@
 #define DEFAULT_STOCK_LEVEL 20
 
 #define STOCK_DELIM "|"
+#define PRICE_DELIM "."
 
 List *createList();
+Node *createNode(Stock *stock);
+void insertNode(List *list, Node *newNode);
 
 #endif

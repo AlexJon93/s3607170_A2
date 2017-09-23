@@ -43,11 +43,14 @@ void systemFree(VmSystem * system)
 Boolean loadData(
     VmSystem * system, const char * stockFileName, const char * coinsFileName)
 {
-	loadStock(system, stockFileName);
-	if(coinsFileName != NULL)
-		loadCoins(system, coinsFileName);
+	if(loadStock(system, stockFileName) == FALSE)
+		return FALSE;
 
-    return FALSE;
+	if(coinsFileName != NULL)
+		if(loadCoins(system, coinsFileName) == FALSE)
+			return FALSE;
+
+    return TRUE;
 }
 
 /**
@@ -62,8 +65,26 @@ Boolean loadStock(VmSystem * system, const char * fileName)
 	{
 		while(fgets(line, sizeof line, stockFile) != NULL)
 		{
-			printf("%s\n", line);
+			Stock stock;
+			Node *node;
+			char *ptr;
+
+			strcpy(stock.id, strtok(line, STOCK_DELIM));
+			strcpy(stock.name, strtok(NULL, STOCK_DELIM));
+			strcpy(stock.desc, strtok(NULL, STOCK_DELIM));
+			stock.price.dollars = strtoul(strtok(NULL, PRICE_DELIM), &ptr, 10);
+			stock.price.cents = strtoul(strtok(NULL, STOCK_DELIM), &ptr, 10);
+			stock.onHand = strtoul(strtok(NULL, END_DELIM), &ptr, 10);
+
+			if((node = createNode(&stock)) == NULL)
+				return FALSE;
+
+			insertNode(system->itemList, node);
 		}
+
+		displayItems(system);
+
+		return TRUE;
 	}
 
     return FALSE;
@@ -98,7 +119,16 @@ Boolean saveCoins(VmSystem * system)
  * This is the data loaded into the linked list in the requirement 2.
  **/
 void displayItems(VmSystem * system)
-{ }
+{
+	List *list = system->itemList;
+	Node *traverser = list->head;
+
+	while(traverser != NULL)
+	{
+		printf("%s\n", traverser->data->name);
+		traverser = traverser->next;
+	}
+}
 
 /**
  * This option allows the user to purchase an item.
