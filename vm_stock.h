@@ -11,4 +11,6 @@
 
 #define STOCK_DELIM "|"
 
+List *createList();
+
 #endif

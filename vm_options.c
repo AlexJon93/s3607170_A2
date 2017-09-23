@@ -13,15 +13,16 @@
  **/
 Boolean systemInit(VmSystem * system)
 {
-	if((system->itemList = malloc(sizeof(system->itemList))) != NULL)
+	if((system->itemList = createList()) != NULL)
 	{
-		system->itemList->head = NULL;
-		system->itemList->size = 0;
+		system->itemList = createList();
+		initCoinArr(system->cashRegister);
+		system->stockFileName = NULL;
+		system->coinFileName = NULL;
 
 		return TRUE;
 	}
 
-	printf("Unable to allocate data\n");
     return FALSE;
 }
 
@@ -55,10 +56,14 @@ Boolean loadData(
 Boolean loadStock(VmSystem * system, const char * fileName)
 {
 	FILE *stockFile;
+	char line[MAX_LEN];
 
 	if((stockFile = fopen(fileName, "r")) != NULL)
 	{
-		printf("Working!");
+		while(fgets(line, sizeof line, stockFile) != NULL)
+		{
+			printf("%s\n", line);
+		}
 	}
 
     return FALSE;

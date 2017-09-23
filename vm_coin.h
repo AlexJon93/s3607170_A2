@@ -10,4 +10,6 @@
 
 #define COIN_DELIM ","
 
+void initCoinArr(Coin *coins);
+
 #endif

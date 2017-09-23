@@ -19,6 +19,18 @@
 #define DESC_LEN 255
 
 /**
+ * Length of price, on-hand amount, and number of delimiters as string
+ **/
+#define PRICE_LEN 5
+#define HAND_LEN 3
+#define DELIM_NO 4
+
+/**
+ * The maximum length of string line in a file
+ **/
+#define MAX_LEN (ID_LEN + NAME_LEN + DESC_LEN + PRICE_LEN + HAND_LEN + DELIM_NO)
+
+/**
  * The number of denominations of currency available in the system.
  **/
 #define NUM_DENOMS 8
