@@ -9,6 +9,17 @@
 #define MENU_NAME_LEN 50
 
 /**
+ * The number of menu items to be in the menu array
+ **/
+
+#define MENU_ITEM_NO 9
+
+/**
+ * Maximum size of user input for menu item selection
+ **/
+#define INPUT_SIZE (3 + EXTRA_SPACES)
+
+/**
  * Represents a function that can be selected from the list of
  * menu_functions - creates a new type called a menu_function.
  */

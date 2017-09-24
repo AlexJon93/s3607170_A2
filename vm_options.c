@@ -82,8 +82,6 @@ Boolean loadStock(VmSystem * system, const char * fileName)
 			insertNode(system->itemList, node);
 		}
 
-		displayItems(system);
-
 		return TRUE;
 	}
 
@@ -123,6 +121,7 @@ void displayItems(VmSystem * system)
 	List *list = system->itemList;
 	Node *traverser = list->head;
 
+	printf("\n");
 	while(traverser != NULL)
 	{
 		printf("%s\n", traverser->data->name);
@@ -135,7 +134,7 @@ void displayItems(VmSystem * system)
  * This function implements requirement 5 of the assignment specification.
  **/
 void purchaseItem(VmSystem * system)
-{ }
+{ printf("Not yet implemented\n"); }
 
 /**
  * You must save all data to the data files that were provided on the command
@@ -143,21 +142,21 @@ void purchaseItem(VmSystem * system)
  * This function implements requirement 6 of the assignment specification.
  **/
 void saveAndExit(VmSystem * system)
-{ }
+{ printf("Not yet implemented\n"); }
 
 /**
  * This option adds an item to the system. This function implements
  * requirement 7 of of assignment specification.
  **/
 void addItem(VmSystem * system)
-{ }
+{ printf("Not yet implemented\n"); }
 
 /**
  * Remove an item from the system, including free'ing its memory.
  * This function implements requirement 8 of the assignment specification.
  **/
 void removeItem(VmSystem * system)
-{ }
+{ printf("Not yet implemented\n"); }
 
 /**
  * This option will require you to display the coins from lowest to highest
@@ -166,7 +165,7 @@ void removeItem(VmSystem * system)
  * specifications.
  **/
 void displayCoins(VmSystem * system)
-{ }
+{ printf("Not yet implemented\n"); }
 
 /**
  * This option will require you to iterate over every stock in the
@@ -175,7 +174,7 @@ void displayCoins(VmSystem * system)
  * This function implements requirement 9 of the assignment specification.
  **/
 void resetStock(VmSystem * system)
-{ }
+{ printf("Not yet implemented\n"); }
 
 /**
  * This option will require you to iterate over every coin in the coin
@@ -185,11 +184,11 @@ void resetStock(VmSystem * system)
  * assignment specifications.
  **/
 void resetCoins(VmSystem * system)
-{ }
+{ printf("Not yet implemented\n"); }
 
 /**
  * This option will require you to display goodbye and free the system.
  * This function implements requirement 10 of the assignment specification.
  **/
 void abortProgram(VmSystem * system)
-{ }
+{ printf("Not yet implemented\n"); }
