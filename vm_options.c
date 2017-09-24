@@ -82,6 +82,7 @@ Boolean loadStock(VmSystem * system, const char * fileName)
 			insertNode(system->itemList, node);
 		}
 
+		fclose(stockFile);
 		return TRUE;
 	}
 
@@ -120,11 +121,32 @@ void displayItems(VmSystem * system)
 {
 	List *list = system->itemList;
 	Node *traverser = list->head;
+	int sizes[DATA_CAT_NO] = {0};
 
+	getColumnSizes(list, sizes);
+
+	printf("\nItems Menu\n\n");
+
+	printf("%-*s", sizes[0], "ID");
+	printf("%s%-*s",CAT_SEP, sizes[1], "Name");
+	printf("%sAvailable", CAT_SEP);
+	printf("%sPrice", CAT_SEP);
 	printf("\n");
+
+	printCharacter(
+		sizes[0]+strlen(CAT_SEP)+sizes[1]+strlen(CAT_SEP)+strlen("Available")+strlen(CAT_SEP)+sizes[2], 
+		CAT_HEAD
+		);
+	printf("\n");
+
 	while(traverser != NULL)
 	{
-		printf("%s\n", traverser->data->name);
+		printf("%-*s", sizes[0], traverser->data->id);
+		printf("%s%-*s", CAT_SEP, sizes[1], traverser->data->name);
+		printf("%s%-9u", CAT_SEP, traverser->data->onHand);
+		printf("%s$ %u.%.2u", CAT_SEP, traverser->data->price.dollars, traverser->data->price.cents);
+		printf("\n");
+
 		traverser = traverser->next;
 	}
 }

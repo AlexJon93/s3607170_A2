@@ -30,5 +30,9 @@ typedef enum boolean
  * Call this function whenever you detect buffer overflow.
  **/
 void readRestOfLine();
-
+/**
+ * Formatting related functions
+ **/
+void printCharacter(int amount, char print);
+int countDigits(int n);
 #endif

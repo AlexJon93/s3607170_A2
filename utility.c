@@ -15,3 +15,25 @@ void readRestOfLine()
     /* Reset the error status of the stream. */
     clearerr(stdin);
 }
+
+/**
+ * Prints a specified number of received character, used for formatting.
+ **/
+void printCharacter(int amount, char print)
+{
+	int counter;
+
+	for(counter = 0; counter < amount; counter++)
+	{
+		printf("%c", print);
+	}
+}
+
+/**
+ * Counts the number of digits in an int, used for formatting
+ **/
+int countDigits(int n) 
+{
+    if (n < 10) return 1;
+    return 1 + countDigits(n / 10);
+}

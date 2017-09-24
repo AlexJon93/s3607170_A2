@@ -88,3 +88,22 @@ void insertNode(List *list, Node *newNode)
 
 	list->size++;
 }
+
+/**
+ * This function returns an array with the largest character size for each
+ * piece of data to be displayed in the displayItems function
+ **/
+void getColumnSizes(List *list, int *sizes)
+{
+	Node *traverser = list->head;
+
+	while(traverser != NULL)
+	{
+		sizes[0] = strlen(traverser->data->id);
+		if(strlen(traverser->data->name) > sizes[1])
+			sizes[1] = strlen(traverser->data->name);
+		if(countDigits(traverser->data->price.dollars) > sizes[2])
+			sizes[2] = countDigits(traverser->data->price.dollars) + 5;
+		traverser = traverser->next;
+	}
+}
