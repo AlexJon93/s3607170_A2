@@ -156,7 +156,71 @@ void displayItems(VmSystem * system)
  * This function implements requirement 5 of the assignment specification.
  **/
 void purchaseItem(VmSystem * system)
-{ printf("Not yet implemented\n"); }
+{
+	char id[ID_LEN + EXTRA_SPACES];
+	List *list = system->itemList;
+	Node *traverser = list->head;
+	Stock *stock = NULL;
+	int dollars, cents, total;
+
+	printf("Purchase Item\n");
+	printCharacter(strlen("Purchase Item"), '-');
+	printf("\nPlease enter the id of the item you wish to purchase: ");
+	fgets(id, sizeof id, stdin);
+
+	id[strlen(id)-1] = '\0';
+
+	while(traverser != NULL)
+	{
+		if(strcmp(traverser->data->id, id) == 0)
+		{
+			stock = traverser->data;
+			break;
+		}
+
+		traverser = traverser->next;
+	}
+
+	if(stock == NULL)
+	{
+		printf("Error: not valid item id\n");
+		purchaseItem(system);
+		return;
+	}
+
+	printf("You have selected \"%s %s\". This will cost you $%u.%.2u.\n",
+	stock->name, stock->desc, stock->price.dollars, stock->price.cents);
+	printf("Please hand over the money - type in the value of each note/coin in cents.\n"
+		"Press enter on a new and empty line to cancel this purchase:\n");
+
+	total = (stock->price.dollars * 100) + stock->price.cents;
+
+	while(total > 0)
+	{
+		char *ptr;
+		char input[PRICE_LEN];
+		int deposited;
+
+		dollars = total / 100;
+		cents = total % 100;
+
+		printf("You still need to give us $%u.%.2u: ", dollars, cents);
+		deposited = strtoul(fgets(input, sizeof input, stdin), &ptr, 10);
+		total -= deposited;
+	}
+
+	total *= -1;
+	dollars = total / 100;
+	cents = total % 100;
+
+	if(total == 0)
+		printf("Thank you. Here is your %s.\n", stock->name);
+	else
+		printf("Thank you. Here is your %s, and your change of $%u.%.2u\n", 
+			stock->name, dollars, cents);
+	printf("Please come back soon.\n");
+	
+}
 
 /**
  * You must save all data to the data files that were provided on the command
