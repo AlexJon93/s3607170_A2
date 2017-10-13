@@ -107,3 +107,38 @@ void getColumnSizes(List *list, int *sizes)
 		traverser = traverser->next;
 	}
 }
+
+void sortByID(List *list)
+{
+	int i;
+
+	for(i = 0; i < list->size; i++)
+	{
+		Node *nextNode = list->head->next;
+		Node *currNode = list->head;
+		Node *prevNode = NULL;
+
+		while(nextNode != NULL)
+		{
+			if(strcmp(currNode->data->id, nextNode->data->id) > 0)
+			{
+				Node *temp;
+
+				currNode->next = nextNode->next;
+				nextNode->next = currNode;
+				if(prevNode != NULL)
+					prevNode->next = nextNode;
+				else
+					list->head = nextNode;
+
+				temp = currNode;
+				currNode = nextNode;
+				nextNode = temp;				
+			}
+
+			prevNode = currNode;
+			currNode = currNode->next;
+			nextNode = nextNode->next;
+		}
+	}
+}

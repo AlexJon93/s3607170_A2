@@ -45,10 +45,16 @@ Boolean loadData(
 {
 	if(loadStock(system, stockFileName) == FALSE)
 		return FALSE;
+	else
+		system->stockFileName = stockFileName;
 
 	if(coinsFileName != NULL)
+	{
 		if(loadCoins(system, coinsFileName) == FALSE)
 			return FALSE;
+		else
+			system->coinFileName = coinsFileName;
+	}
 
     return TRUE;
 }
@@ -102,6 +108,31 @@ Boolean loadCoins(VmSystem * system, const char * fileName)
  **/
 Boolean saveStock(VmSystem * system)
 {
+	FILE *stockFile;
+
+	sortByID(system->itemList);
+	if((stockFile = fopen(system->stockFileName, "w")) != NULL)
+	{
+		Node *traverser = system->itemList->head;
+
+		while(traverser != NULL)
+		{
+			Stock *stock = traverser->data;
+
+			fprintf(stockFile, "%s|%s|%s|%d.%d|%d\n",
+				stock->id,
+				stock->name,
+				stock->desc,
+				stock->price.dollars,
+				stock->price.cents,
+				stock->onHand);
+
+			traverser = traverser->next;
+		}
+		fclose(stockFile);
+		return TRUE;
+	}
+
     return FALSE;
 }
 
@@ -156,7 +187,99 @@ void displayItems(VmSystem * system)
  * This function implements requirement 5 of the assignment specification.
  **/
 void purchaseItem(VmSystem * system)
-{ printf("Not yet implemented\n"); }
+{
+	char input[ID_LEN+EXTRA_SPACES];
+	Node *traverser = system->itemList->head;
+	Stock *item = NULL;
+
+	printf("\nPurchase Item\n");
+	printCharacter(strlen("Purchase Item"), CAT_HEAD);
+	while(TRUE)
+	{
+		int dollars;
+		int cents;
+
+		printf("\nPlease enter the ID of the item you wish to purchase: \n");
+		fgets(input, sizeof(input), stdin);
+		input[strcspn(input, "\n")] = '\0';
+
+		while(traverser != NULL)
+		{
+			if(strcmp(input, traverser->data->id) == 0)
+			{
+				item = traverser->data;
+			}
+			traverser = traverser->next;
+		}
+
+		if(item == NULL)
+		{
+			printf("Error: Invalid ID entered\n");
+			continue;
+		}
+
+		dollars = item->price.dollars;
+		cents = item->price.cents;
+
+		printf("You have selected \"%s - %s\". This will cost $%d.%.2d\n", 
+			item->name, item->desc, dollars, cents);
+
+		printf("Please hand over the money - type in the value of each note/coin in cents\n");
+		printf("Press enter on a new and empty line to cancel this purchase\n");
+
+		while(TRUE)
+		{
+			char moneyInput[PRICE_LEN];
+			unsigned amount;
+			char *ptr;
+
+			printf("You still need to give us $%d.%.2d: ", dollars, cents);
+			fgets(moneyInput, sizeof(moneyInput), stdin);
+			moneyInput[strcspn(moneyInput, "\n")] = '\0';
+			amount = strtoul(moneyInput, &ptr, 10);
+
+			if(amount > 100)
+			{
+				dollars -= amount / 100;
+				amount %= 100;
+			}
+
+			if(amount < 100)
+			{
+				cents -= amount;
+				if(cents < 0 && dollars > 0)
+				{
+					cents += 100;
+					dollars--;
+				}
+			}
+
+			if(dollars == 0 && cents == 0)
+			{
+				printf("Thank you. Here is your %s.\n", item->name);
+				break;
+			}
+
+			else if(dollars < 0)
+			{
+				dollars *= -1;
+				if(cents < 0)
+					cents *= -1;
+				printf("Thank you. Here is your %s, and your change of $%d.%.2d\n", item->name, dollars, cents);
+				break;
+			}
+
+			else if(dollars == 0 && cents < 0)
+			{
+				cents *= -1;
+				printf("Thank you. Here is your %s, and your change of $%d.%.2d\n", item->name, dollars, cents);
+				break;
+			}
+		}
+
+		break;
+	}
+}
 
 /**
  * You must save all data to the data files that were provided on the command
@@ -164,7 +287,10 @@ void purchaseItem(VmSystem * system)
  * This function implements requirement 6 of the assignment specification.
  **/
 void saveAndExit(VmSystem * system)
-{ printf("Not yet implemented\n"); }
+{
+	saveStock(system);
+	free(system);
+}
 
 /**
  * This option adds an item to the system. This function implements

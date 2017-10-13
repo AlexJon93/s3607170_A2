@@ -27,5 +27,6 @@ List *createList();
 Node *createNode(Stock *stock);
 void insertNode(List *list, Node *newNode);
 void getColumnSizes(List *list, int *sizes);
+void sortByID(List *list);
 
 #endif
