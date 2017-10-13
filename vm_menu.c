@@ -1,3 +1,14 @@
+/******************************************************************************
+
+** Student Name: Alexander Jarvis
+
+** Student Number: s3607170
+
+** Date of submission: Fri, 13 Oct 2017
+
+** Course: COSC1076, Semester 2, 2017
+
+******************************************************************************/
 #include "vm_menu.h"
 
 /**
@@ -48,7 +59,7 @@ MenuFunction getMenuChoice(MenuItem * menu)
 	{
 		if(iterate == 0)
 			printf("\nMain Menu:\n");
-		if(iterate == 4)
+		if(iterate == 3)
 			printf("Administrator-Only Menu:\n");
 		printf(" %s\n", menu[iterate].text);
 	}

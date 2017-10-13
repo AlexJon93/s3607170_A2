@@ -1,3 +1,14 @@
+/******************************************************************************
+
+** Student Name: Alexander Jarvis
+
+** Student Number: s3607170
+
+** Date of submission: Fri, 13 Oct 2017
+
+** Course: COSC1076, Semester 2, 2017
+
+******************************************************************************/
 #ifndef VM_SYSTEM_H
 #define VM_SYSTEM_H
 
@@ -21,14 +32,9 @@
 /**
  * Length of price, on-hand amount, and number of delimiters as string
  **/
-#define PRICE_LEN 5
+#define PRICE_LEN 8
 #define HAND_LEN 3
 #define DELIM_NO 4
-
-/**
- * The maximum length of string line in a file
- **/
-#define MAX_LEN (ID_LEN + NAME_LEN + DESC_LEN + PRICE_LEN + HAND_LEN + DELIM_NO)
 
 /**
  * The number of denominations of currency available in the system.

@@ -1,3 +1,15 @@
+/******************************************************************************
+
+** Student Name: Alexander Jarvis
+
+** Student Number: s3607170
+
+** Date of submission: Fri, 13 Oct 2017
+
+** Course: COSC1076, Semester 2, 2017
+
+******************************************************************************/
+
 #include "utility.h"
 
 /**
@@ -34,4 +46,89 @@ int countDigits(int n)
 {
     if (n < 10) return 1;
     return 1 + countDigits(n / 10);
+}
+
+Boolean validateInputFiles(const char * stockFileName, const char * coinsFileName)
+{
+    FILE *stockFile, *coinsFile;
+    char line[MAX_LEN];
+
+    if((stockFile = fopen(stockFileName, "r")) != NULL)
+    {
+        while(fgets(line, sizeof line, stockFile) != NULL)
+        {
+            if(countCharOccur(line, '|') > 4)
+            {
+                printf("Error: stock file contains too many fields\n");
+                return FALSE;
+            }
+            else if (countCharOccur(line, '|') < 4)
+            {
+                printf("Error: stock file contains too few fields\n");
+                return FALSE;
+            }
+        }
+    }
+    else
+        return FALSE;
+    if((coinsFile = fopen(coinsFileName, "r")) != NULL)
+    {
+        while(fgets(line, sizeof line, coinsFile) != NULL)
+        {
+            if(countCharOccur(line, ',') > 1)
+            {
+                printf("Error: coins file contains too many fields\n");
+                return FALSE;
+            }
+            else if (countCharOccur(line, '|') < 1)
+            {
+                printf("Error: stock file contains too few fields\n");
+                return FALSE;
+            }
+        }
+    }
+
+    return FALSE;
+}
+
+int countCharOccur(char *line, char check)
+{
+    int total = 0, i = 0;
+
+    while(line[i] != '\n')
+    {
+        if(line[i] == check)
+            total++;
+        i++;
+    }
+
+    return total;
+}
+
+Boolean checkStringAlpha(char *string)
+{
+    int i = 0;
+
+    while(string[i] != '\0')
+    {
+        if(!isalpha(string[i]))
+            return FALSE;
+        i++;
+    }
+
+    return TRUE;
+}
+
+Boolean checkStringNum(char *string)
+{
+    int i = 0;
+
+    while(string[i] != '\0')
+    {
+        if(!isdigit(string[i]))
+            return FALSE;
+        i++;
+    }
+
+    return TRUE;
 }

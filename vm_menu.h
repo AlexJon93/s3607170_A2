@@ -1,3 +1,14 @@
+/******************************************************************************
+
+** Student Name: Alexander Jarvis
+
+** Student Number: s3607170
+
+** Date of submission: Fri, 13 Oct 2017
+
+** Course: COSC1076, Semester 2, 2017
+
+******************************************************************************/
 #ifndef VM_MENU_H
 #define VM_MENU_H
 

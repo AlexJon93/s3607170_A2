@@ -1,3 +1,15 @@
+/******************************************************************************
+
+** Student Name: Alexander Jarvis
+
+** Student Number: s3607170
+
+** Date of submission: Fri, 13 Oct 2017
+
+** Course: COSC1076, Semester 2, 2017
+
+******************************************************************************/
+
 #include "vm_options.h"
 
 /**
@@ -42,17 +54,17 @@ void systemFree(VmSystem * system)
  * that the same files will be used for saving. A key part of this function is
  * validation. A substantial number of marks are allocated to this function.
  **/
-Boolean loadData(
-    VmSystem * system, const char * stockFileName, const char * coinsFileName)
+Boolean loadData(VmSystem * system, const char * stockFileName, const char * coinsFileName)
 {
-	if(loadStock(system, stockFileName) == FALSE)
+	validateInputFiles(stockFileName, coinsFileName);
+	if(!loadStock(system, stockFileName))
 		return FALSE;
 	else
 		system->stockFileName = stockFileName;
 
 	if(coinsFileName != NULL)
 	{
-		if(loadCoins(system, coinsFileName) == FALSE)
+		if(!loadCoins(system, coinsFileName))
 			return FALSE;
 		else
 			system->coinFileName = coinsFileName;
@@ -78,8 +90,29 @@ Boolean loadStock(VmSystem * system, const char * fileName)
 			char *ptr;
 
 			strcpy(stock.id, strtok(line, STOCK_DELIM));
+			if(!isalpha(stock.id[0]))
+			{
+				printf("Error: id in stock file is invalid\n");
+				return FALSE;
+			}
+			if(!checkStringNum(memmove(&stock.name[0], &stock.name[1], strlen(stock.name) - 1)))
+			{
+				printf("Error: id in stockFile is invalid\n");
+				return FALSE;
+			}
+
 			strcpy(stock.name, strtok(NULL, STOCK_DELIM));
+			if(!checkStringAlpha(stock.name))
+			{
+				printf("Error: name in stock file is invalid\n");
+				return FALSE;
+			}
 			strcpy(stock.desc, strtok(NULL, STOCK_DELIM));
+			if(!checkStringAlpha(stock.desc))
+			{
+				printf("Error: description in stock file is invalid\n");
+				return FALSE;
+			}
 			stock.price.dollars = strtoul(strtok(NULL, PRICE_DELIM), &ptr, 10);
 			stock.price.cents = strtoul(strtok(NULL, STOCK_DELIM), &ptr, 10);
 			stock.onHand = strtoul(strtok(NULL, END_DELIM), &ptr, 10);
@@ -94,6 +127,7 @@ Boolean loadStock(VmSystem * system, const char * fileName)
 		return TRUE;
 	}
 
+	printf("Error: Unable to open stock file.\n");
     return FALSE;
 }
 
@@ -102,6 +136,30 @@ Boolean loadStock(VmSystem * system, const char * fileName)
  **/
 Boolean loadCoins(VmSystem * system, const char * fileName)
 {
+	FILE *coinsFile;
+	char line[MAX_LEN];
+	Coin *coins = system->cashRegister;
+
+	if((coinsFile = fopen(fileName, "r")) != NULL)
+	{
+		while(fgets(line, sizeof line, coinsFile) != NULL)
+		{
+			Denomination denom;
+			char *ptr;
+
+			if((denom = convertCoinToDenom(strtoul(strtok(line, COIN_DELIM), &ptr, 10))) < 0)
+			{
+				printf("Error: coins file contains invalid coin denomination\n");
+				return FALSE;
+			}
+
+			coins[denom].count = strtoul(strtok(NULL, END_DELIM), &ptr, 10);
+		}
+
+		return TRUE;
+	}
+
+	printf("Error: Unable to open coins file.\n");
     return FALSE;
 }
 
@@ -121,7 +179,7 @@ Boolean saveStock(VmSystem * system)
 		{
 			Stock *stock = traverser->data;
 
-			fprintf(stockFile, "%s|%s|%s|%d.%d|%d\n",
+			fprintf(stockFile, "%s|%s|%s|%d.%.2d|%d\n",
 				stock->id,
 				stock->name,
 				stock->desc,
@@ -143,6 +201,19 @@ Boolean saveStock(VmSystem * system)
  **/
 Boolean saveCoins(VmSystem * system)
 {
+	FILE *coinsFile;
+
+	if((coinsFile = fopen(system->coinFileName, "w")) != NULL)
+	{
+		int i;
+		for(i = 0; i < NUM_DENOMS; i++)
+		{
+			fprintf(coinsFile, "%d,%d\n", denomToCents(system->cashRegister[i].denom), system->cashRegister[i].count);
+		}
+		fclose(coinsFile);
+		return TRUE;
+	}
+
     return FALSE;
 }
 
@@ -191,34 +262,23 @@ void displayItems(VmSystem * system)
 void purchaseItem(VmSystem * system)
 {
 	char id[ID_LEN + EXTRA_SPACES];
-	List *list = system->itemList;
-	Node *traverser = list->head;
 	Stock *stock = NULL;
-	int dollars, cents, total;
+	int total, inputted;
 
 	printf("Purchase Item\n");
 	printCharacter(strlen("Purchase Item"), '-');
 	printf("\nPlease enter the id of the item you wish to purchase: ");
+
 	fgets(id, sizeof id, stdin);
-
-	id[strlen(id)-1] = '\0';
-
-	while(traverser != NULL)
-	{
-		if(strcmp(traverser->data->id, id) == 0)
-		{
-			stock = traverser->data;
-			break;
-		}
-
-		traverser = traverser->next;
-	}
+	if(strcmp(id, END_DELIM) == 0)
+		return;
+	strtok(id, END_DELIM);
+	stock = getByID(system->itemList, id);
 
 	if(stock == NULL)
 	{
 		printf("Error: not valid item id\n");
 		purchaseItem(system);
-		return;
 	}
 
 	printf("You have selected \"%s %s\". This will cost you $%u.%.2u.\n",
@@ -226,33 +286,46 @@ void purchaseItem(VmSystem * system)
 	printf("Please hand over the money - type in the value of each note/coin in cents.\n"
 		"Press enter on a new and empty line to cancel this purchase:\n");
 
-	total = (stock->price.dollars * 100) + stock->price.cents;
-
+	inputted = 0;
+	total = stock->price.dollars * 100 + stock->price.cents;
 	while(total > 0)
 	{
+		char input[PRICE_LEN + EXTRA_SPACES];
 		char *ptr;
-		char input[PRICE_LEN];
-		int deposited;
+		int current;
 
-		dollars = total / 100;
-		cents = total % 100;
+		printf("You still need to give us %u.%.2u: ", total / 100, total % 100);
+		fgets(input, sizeof input, stdin);
+		if(strcmp(input, END_DELIM) == 0)
+		{
+			if(inputted != 0)
+			{
+				printf("Purchase cancelled, here is your change: ");
+				printChange(system, inputted);
+			}
+			return;
+		}
+		current = strtoul(strtok(input, END_DELIM), &ptr, 10);
+		if(!checkDenom(current))
+		{
+			printf("Error: %u.%.2u not valid denomination of money\n", current / 100, current % 100);
+			continue;
+		}
 
-		printf("You still need to give us $%u.%.2u: ", dollars, cents);
-		deposited = strtoul(fgets(input, sizeof input, stdin), &ptr, 10);
-		total -= deposited;
+		inputted += current;
+		total -= current;
 	}
 
-	total *= -1;
-	dollars = total / 100;
-	cents = total % 100;
-
 	if(total == 0)
-		printf("Thank you. Here is your %s.\n", stock->name);
+		printf("Thank you here is your %s.", stock->name);
 	else
-		printf("Thank you. Here is your %s, and your change of $%u.%.2u\n", 
-			stock->name, dollars, cents);
-	printf("Please come back soon.\n");
-	
+	{
+		int remainder = total * -1;
+		printf("Thank you here is your %s, and your change of %u.%.2u:", stock->name, remainder / 100, remainder % 100);
+		printChange(system, remainder);
+	}
+
+	printf("\nPlease come back soon.\n");
 }
 
 /**
@@ -263,7 +336,9 @@ void purchaseItem(VmSystem * system)
 void saveAndExit(VmSystem * system)
 {
 	saveStock(system);
+	saveCoins(system);
 	systemFree(system);
+	printf("\nGoodbye. \n\n");
 }
 
 /**
@@ -271,14 +346,58 @@ void saveAndExit(VmSystem * system)
  * requirement 7 of of assignment specification.
  **/
 void addItem(VmSystem * system)
-{ printf("Not yet implemented\n"); }
+{ 
+	char *ptr;
+	Stock stock;
+	Node *node;
+
+	char id[ID_LEN + NULL_SPACE];
+	char name[NAME_LEN + NULL_SPACE];
+	char desc[DESC_LEN + NULL_SPACE];
+	char price[PRICE_LEN + NULL_SPACE];
+
+	sprintf(id, "I%.4d", system->itemList->size+1);
+	printf("This new item will have the Item id of %s\n", id);
+	strcpy(stock.id, id);
+	printf("Enter the item name: ");
+	fgets(name, sizeof name, stdin);
+	if(strcmp(name, END_DELIM) == 0)
+		return;
+	strcpy(stock.name, strtok(name, END_DELIM));
+	printf("Enter the item description: ");
+	fgets(desc, sizeof desc, stdin);
+	if(strcmp(desc, END_DELIM) == 0)
+		return;
+	strcpy(stock.desc, strtok(desc, END_DELIM));
+	printf("Enter the price for this item: ");
+	fgets(price, sizeof price, stdin);
+	if(strcmp(price, END_DELIM) == 0)
+		return;
+
+	stock.price.dollars = strtoul(strtok(price, PRICE_DELIM), &ptr, 10);
+	stock.price.cents = strtoul(strtok(NULL, END_DELIM), &ptr, 10);
+	stock.onHand = DEFAULT_STOCK_LEVEL;
+
+	if((node = createNode(&stock)) == NULL)
+		return;
+	insertNode(system->itemList, node);
+}
 
 /**
  * Remove an item from the system, including free'ing its memory.
  * This function implements requirement 8 of the assignment specification.
  **/
 void removeItem(VmSystem * system)
-{ printf("Not yet implemented\n"); }
+{
+	char id[ID_LEN + EXTRA_SPACES];
+	printf("Enter the item id of the item to remove from the menu:");
+	fgets(id, sizeof id, stdin);
+	if(strcmp(id, END_DELIM) == 0)
+		return;
+	strtok(id, END_DELIM);
+	if(!removeNode(system->itemList, id))
+		printf("Error: not a valid id\n");
+}
 
 /**
  * This option will require you to display the coins from lowest to highest
@@ -287,7 +406,16 @@ void removeItem(VmSystem * system)
  * specifications.
  **/
 void displayCoins(VmSystem * system)
-{ printf("Not yet implemented\n"); }
+{
+	int i;
+	printf("\nCoins Summary\n");
+	printCharacter(20, '-');
+	printf("\nDenomination\t | Count\n\n");
+	for(i = 0; i < NUM_DENOMS; i++) 
+	{
+		printf("%s  \t | %d\n", printDenom(system, i), system->cashRegister[i].count);
+	}
+}
 
 /**
  * This option will require you to iterate over every stock in the
@@ -296,7 +424,15 @@ void displayCoins(VmSystem * system)
  * This function implements requirement 9 of the assignment specification.
  **/
 void resetStock(VmSystem * system)
-{ printf("Not yet implemented\n"); }
+{ 
+	Node *traverser = system->itemList->head;
+
+	while(traverser != NULL)
+	{
+		traverser->data->onHand = DEFAULT_STOCK_LEVEL;
+		traverser = traverser->next;
+	}
+}
 
 /**
  * This option will require you to iterate over every coin in the coin
@@ -306,11 +442,20 @@ void resetStock(VmSystem * system)
  * assignment specifications.
  **/
 void resetCoins(VmSystem * system)
-{ printf("Not yet implemented\n"); }
+{
+	int i;
+	for(i = 0; i < NUM_DENOMS; i++) 
+	{
+		system->cashRegister[i].count = DEFAULT_COIN_COUNT;
+	}
+}
 
 /**
  * This option will require you to display goodbye and free the system.
  * This function implements requirement 10 of the assignment specification.
  **/
 void abortProgram(VmSystem * system)
-{ printf("Not yet implemented\n"); }
+{
+	systemFree(system);
+	printf("\nGoodbye. \n\n");
+}

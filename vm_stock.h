@@ -1,3 +1,14 @@
+/******************************************************************************
+
+** Student Name: Alexander Jarvis
+
+** Student Number: s3607170
+
+** Date of submission: Fri, 13 Oct 2017
+
+** Course: COSC1076, Semester 2, 2017
+
+******************************************************************************/
 #ifndef VM_STOCK_H
 #define VM_STOCK_H
 
@@ -26,9 +37,11 @@
 List *createList();
 Node *createNode(Stock *stock);
 void insertNode(List *list, Node *newNode);
+Boolean removeNode(List *list, char *id);
 void freeList(List *list);
 void freeNode(Node *node);
 void getColumnSizes(List *list, int *sizes);
 void sortByID(List *list);
+Stock *getByID(List *list, char *id);
 
 #endif

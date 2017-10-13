@@ -1,3 +1,14 @@
+/******************************************************************************
+
+** Student Name: Alexander Jarvis
+
+** Student Number: s3607170
+
+** Date of submission: Fri, 13 Oct 2017
+
+** Course: COSC1076, Semester 2, 2017
+
+******************************************************************************/
 #include "vm_stock.h"
 
 /**
@@ -89,6 +100,35 @@ void insertNode(List *list, Node *newNode)
 	list->size++;
 }
 
+Boolean removeNode(List *list, char *id)
+{
+	Node *currNode = list->head;
+	Node *prevNode = NULL;
+
+	while(currNode != NULL)
+	{
+		if(strcmp(currNode->data->id, id) == 0)
+		{
+			if(prevNode == NULL)
+			{
+				list->head = currNode->next;
+				freeNode(currNode);
+			}
+			else
+			{
+				prevNode->next = currNode->next;
+				freeNode(currNode);
+			}
+			return TRUE;
+		}
+
+		prevNode = currNode;
+		currNode = currNode->next;
+	}
+
+	return FALSE;
+}
+
 void freeList(List *list)
 {
 	Node *traverser = list->head;
@@ -165,4 +205,23 @@ void sortByID(List *list)
 			nextNode = nextNode->next;
 		}
 	}
+}
+
+Stock *getByID(List *list, char *id)
+{
+	Node *traverser = list->head;
+	Stock *stock = NULL;
+
+	while(traverser != NULL)
+	{
+		if(strcmp(traverser->data->id, id) == 0)
+		{
+			stock = traverser->data;
+			break;
+		}
+
+		traverser = traverser->next;
+	}
+
+	return stock;
 }
