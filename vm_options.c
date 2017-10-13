@@ -34,9 +34,7 @@ Boolean systemInit(VmSystem * system)
 void systemFree(VmSystem * system)
 {
 	freeList(system->itemList);
-	free(system->cashRegister);
-	system->stockFileName = NULL;
-	system->coinFileName = NULL;
+	free(system->itemList);
 }
 
 /**
