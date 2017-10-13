@@ -12,7 +12,7 @@
 
 List *createList()
 {
-	List *list = malloc(sizeof(list));
+	List *list = malloc(sizeof(*list));
 
 
 	if(list != NULL)
