@@ -24,9 +24,7 @@ void printCharacter(int amount, char print)
 	int counter;
 
 	for(counter = 0; counter < amount; counter++)
-	{
 		printf("%c", print);
-	}
 }
 
 /**
