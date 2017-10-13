@@ -101,7 +101,7 @@ void freeList(List *list)
 		freeNode(temp);
 	}
 
-	free(list);
+	free(&list->size);
 }
 
 void freeNode(Node *node)
