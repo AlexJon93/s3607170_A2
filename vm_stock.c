@@ -12,10 +12,10 @@
 
 List *createList()
 {
-	List *list;
+	List *list = malloc(sizeof(list));
 
 
-	if((list = malloc(sizeof(list))) != NULL)
+	if(list != NULL)
 	{
 		list->head = NULL;
 		list->size = 0;
@@ -101,7 +101,7 @@ void freeList(List *list)
 		freeNode(temp);
 	}
 
-	free(&list->size);
+	free(list);
 }
 
 void freeNode(Node *node)
