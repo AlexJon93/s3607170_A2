@@ -32,7 +32,12 @@ Boolean systemInit(VmSystem * system)
  * and run it through valgrind.
  **/
 void systemFree(VmSystem * system)
-{ }
+{
+	freeList(system->itemList);
+	free(system->cashRegister);
+	system->stockFileName = NULL;
+	system->coinFileName = NULL;
+}
 
 /**
  * Loads the stock and coin data into the system. You will also need to assign
@@ -261,7 +266,7 @@ void purchaseItem(VmSystem * system)
 void saveAndExit(VmSystem * system)
 {
 	saveStock(system);
-	freeList(system->itemList);
+	systemFree(system);
 }
 
 /**
