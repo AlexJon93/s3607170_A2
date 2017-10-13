@@ -34,7 +34,6 @@ Boolean systemInit(VmSystem * system)
 void systemFree(VmSystem * system)
 {
 	freeList(system->itemList);
-	free(system->itemList);
 }
 
 /**
