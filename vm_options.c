@@ -261,7 +261,7 @@ void purchaseItem(VmSystem * system)
 void saveAndExit(VmSystem * system)
 {
 	saveStock(system);
-	free(system);
+	freeList(system->itemList);
 }
 
 /**

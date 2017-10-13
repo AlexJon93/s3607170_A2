@@ -89,6 +89,27 @@ void insertNode(List *list, Node *newNode)
 	list->size++;
 }
 
+void freeList(List *list)
+{
+	Node *traverser = list->head;
+	Node *temp;
+
+	while(traverser != NULL)
+	{
+		temp = traverser;
+		traverser = traverser->next;
+		freeNode(temp);
+	}
+
+	free(list);
+}
+
+void freeNode(Node *node)
+{
+	free(node->data);
+	free(node);
+}
+
 /**
  * This function returns an array with the largest character size for each
  * piece of data to be displayed in the displayItems function
@@ -108,6 +129,9 @@ void getColumnSizes(List *list, int *sizes)
 	}
 }
 
+/**
+ * This function sorts the received linkedlist in order of the value of each node's id string
+ **/
 void sortByID(List *list)
 {
 	int i;
